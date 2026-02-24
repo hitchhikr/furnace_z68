@@ -116,9 +116,9 @@ z68_start:
                         move.l  (a0)+,z68_loop-z68_vars(a6)
                         move.l  (a0)+,d0
                         add.l   a0,d0
-                        ; -2 to pass over the numb er of samples
+                        ; -2 to pass over the number of samples
                         sub.l   #12-2,d0
-                        move.l  d0,z68_pcm-z68_vars(a6)
+                        move.l  d0,z68_adpcm_addr-z68_vars(a6)
                         ; center
                         move.b  #3,z68_panning-z68_vars(a6)
                         move.w  #4<<8,z68_adpcm_rate-z68_vars(a6)
@@ -242,7 +242,7 @@ z68_interrupt:
                         bne     .adpcm_sample
                         move.b  (a0)+,d0
                         move.l  d2,-(a7)
-                        move.l  z68_pcm-z68_vars(a6),a1
+                        move.l  z68_adpcm_addr-z68_vars(a6),a1
                         lsl.l   #3,d0
                         ; Number of bytes of playback data
                         move.l  4(a1,d0.l),d2
@@ -326,7 +326,7 @@ z68_music_speed:        dc.w    0
 z68_music_start:        dc.l    0
 z68_music_ptr:          dc.l    0
 z68_loop:               dc.l    0
-z68_pcm:                dc.l    0
+z68_adpcm_addr:         dc.l    0
 z68_adpcm_rate:         dc.w    0
 z68_panning:            dc.b    0
 z68_playing_flag:       dc.b    0
