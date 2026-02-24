@@ -330,7 +330,6 @@ z68_adpcm_addr:         dc.l    0
 z68_adpcm_rate:         dc.w    0
 z68_panning:            dc.b    0
 z68_playing_flag:       dc.b    0
-                        even
 
 ; =======================================================
 z68_module:             incbin  "boomer.z68"
