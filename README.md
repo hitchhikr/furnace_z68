@@ -1,5 +1,5 @@
 This is a hack for the Furnace tracker which adds my own z68 X68000 music files export
-and replay routine.
+and asm replay routine.
 
 For more information, original Furnace is located here:
 
