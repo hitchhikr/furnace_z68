@@ -1,5 +1,5 @@
 ; =======================================================
-; X68000 z68 version 1 replay test
+; X68000 z68 version 1b replay test
 ; Written by Franck 'hitchhikr' Charlet.
 ; =======================================================
                         opt     o+
@@ -79,7 +79,7 @@ old_MFP_IERB:           dc.b    0
                         even
 
 ; =======================================================
-; X68000 z68 version 1 replay
+; X68000 z68 version 1b replay
 ; Written by Franck 'hitchhikr' Charlet.
 ; =======================================================
 Z68_VERSION             equ     1
@@ -107,9 +107,8 @@ z68_start:
                         bsr     z68_stop
                         st.b    z68_playing_flag-z68_vars(a6)
                         ; install the OPM interrupt
-                        moveq   #_OPMINTST,d0
                         lea     z68_interrupt-z68_vars(a6),a1
-                        trap    #15
+                        IOCS    _OPMINTST
                         moveq   #0,d0
                         cmp.l   #'z68'<<8|Z68_VERSION,(a0)+
                         bne     .format_error
@@ -145,6 +144,7 @@ z68_enable_timer:
                         moveq   #%00101010,d1
                         ; no rts
 z68_set_ym_reg:
+                        eor.w   #%1100000000,sr
                         tst.b   FM_STATUS-FM_DATA(a2)
                         bmi     z68_set_ym_reg
                         ; reg selection
@@ -154,9 +154,14 @@ z68_set_ym_reg:
                         bmi     .wait_fm_chip
                         ; write datum
                         move.b  d1,FM_DATA-FM_DATA(a2)
+                        eor.w   #%1100000000,sr
                         rts
 z68_interrupt:
+.wait_raster:
+                        btst.b  #6,MFP_GPIP
+                        beq.b   .wait_raster
                         movem.l d0-d3/a0-a2/a6,-(a7)
+                        eor.w   #%1100000000,sr
                         lea     z68_vars(pc),a6
                         lea     FM_DATA,a2
                     IFNE Z68_RASTER_TIME
