@@ -1,9 +1,9 @@
 ; =======================================================
-; X68000 z68 version 1b replay test
+; X68000 z68 version 1c replay test
 ; Written by Franck 'hitchhikr' Charlet.
 ; =======================================================
                         opt     o+
-                        opt     all+
+                        opt     a+
                         
 ; =======================================================
 MFP_GPIP                equ     $E88001
@@ -79,7 +79,7 @@ old_MFP_IERB:           dc.b    0
                         even
 
 ; =======================================================
-; X68000 z68 version 1b replay
+; X68000 z68 version 1c replay
 ; Written by Franck 'hitchhikr' Charlet.
 ; =======================================================
 Z68_VERSION             equ     1
@@ -297,7 +297,7 @@ z68_interrupt:
                         add.l   z68_music_start-z68_vars(a6),a0
                         move.l  a0,z68_music_ptr-z68_vars(a6)
                         ; no loop
-                        tst.l   z68_music_start-z68_vars(a6)
+                        tst.l   z68_loop-z68_vars(a6)
                         bne     .next_cmd
                         ; end song play
                         sf.b    z68_playing_flag-z68_vars(a6)
