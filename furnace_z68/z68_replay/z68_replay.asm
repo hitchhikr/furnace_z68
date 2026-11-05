@@ -144,29 +144,27 @@ z68_enable_timer:
                         moveq   #%00101010,d1
                         ; no rts
 z68_set_ym_reg:
-                        eor.w   #%1100000000,sr
                         tst.b   FM_STATUS-FM_DATA(a2)
                         bmi     z68_set_ym_reg
                         ; reg selection
                         move.b  d0,FM_CTRL-FM_DATA(a2)
-.wait_fm_chip:
+.wait_fm_chip_2:
                         tst.b   FM_STATUS-FM_DATA(a2)
-                        bmi     .wait_fm_chip
+                        bmi     .wait_fm_chip_2
                         ; write datum
                         move.b  d1,FM_DATA-FM_DATA(a2)
-                        eor.w   #%1100000000,sr
                         rts
 z68_interrupt:
 .wait_raster:
                         btst.b  #6,MFP_GPIP
                         beq.b   .wait_raster
-                        movem.l d0-d3/a0-a2/a6,-(a7)
-                        eor.w   #%1100000000,sr
-                        lea     z68_vars(pc),a6
-                        lea     FM_DATA,a2
                     IFNE Z68_RASTER_TIME
                         move.w  #$ffe,$E82200
                     ENDC
+                        eor.w   #%1100000000,sr
+                        movem.l d0-d3/a0-a2/a6,-(a7)
+                        lea     z68_vars(pc),a6
+                        lea     FM_DATA,a2
                         tst.b   z68_playing_flag-z68_vars(a6)
                         beq     .no_play
                         move.l  z68_music_ptr-z68_vars(a6),a0
@@ -318,10 +316,11 @@ z68_interrupt:
                         move.l  a0,z68_music_ptr-z68_vars(a6)
 .no_play:
                         bsr     z68_enable_timer
+                        movem.l (a7)+,d0-d3/a0-a2/a6
+                        eor.w   #%1100000000,sr
                     IFNE Z68_RASTER_TIME
                         move.w  #0,$E82200
                     ENDC
-                        movem.l (a7)+,d0-d3/a0-a2/a6
                         rte
 
 ; =======================================================
