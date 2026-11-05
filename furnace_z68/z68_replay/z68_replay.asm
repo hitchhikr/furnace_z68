@@ -158,10 +158,10 @@ z68_interrupt:
 .wait_raster:
                         btst.b  #6,MFP_GPIP
                         beq.b   .wait_raster
+                        eor.w   #%1100000000,sr
                     IFNE Z68_RASTER_TIME
                         move.w  #$ffe,$E82200
                     ENDC
-                        eor.w   #%1100000000,sr
                         movem.l d0-d3/a0-a2/a6,-(a7)
                         lea     z68_vars(pc),a6
                         lea     FM_DATA,a2
@@ -317,10 +317,10 @@ z68_interrupt:
 .no_play:
                         bsr     z68_enable_timer
                         movem.l (a7)+,d0-d3/a0-a2/a6
-                        eor.w   #%1100000000,sr
                     IFNE Z68_RASTER_TIME
                         move.w  #0,$E82200
                     ENDC
+                        eor.w   #%1100000000,sr
                         rte
 
 ; =======================================================
